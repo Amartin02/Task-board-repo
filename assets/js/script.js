@@ -1,6 +1,6 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-let nextId = JSON.parse(localStorage.getItem("nextId"));
+let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+let nextId = localStorage.getItem("nextId");
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
@@ -68,11 +68,20 @@ function renderTaskList() {
 }
 
 // Todo: create a function to handle adding a new task
-function handleAddTask(event) {
-  const id = $(this).attr("data-id");
-  taskList = taskList.filter((task) => task.id !== Number(id));
+function handleAddTask() {
+  const task = {
+    id: generateTaskId(),
+    title: $("#title").val(),
+    description: $("#taskDescription").val(),
+    dueDate: $("#taskDueDate").val(),
+    status: "to-do",
+  };
+  taskList.push(task);
   localStorage.setItem("tasks", JSON.stringify(taskList));
   renderTaskList();
+  $("#title").val("");
+  $("#taskDescription").val("");
+  $("#taskDueDate").val("");
 }
 
 // Todo: create a function to handle deleting a task
@@ -85,6 +94,7 @@ function handleDeleteTask(event) {
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
+  console.log(ui);
   const id = ui.draggable[0].dataset.id;
   const status = event.target.id;
   for (let i = 0; i < taskList.length; i++) {
